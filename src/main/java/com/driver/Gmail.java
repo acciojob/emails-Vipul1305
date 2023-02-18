@@ -10,13 +10,14 @@ public class Gmail extends Email {
     int inboxCapacity; //maximum number of mails inbox can store
     //Inbox: Stores mails. Each mail has date (Date), sender (String), message (String). It is guaranteed that message is distinct for all mails.
     //Trash: Stores mails. Each mail has date (Date), sender (String), message (String)
-    int trash;
+    ArrayList<Inbox> db;// Inbox DataBase
+    ArrayList<Inbox> trash;
     public Gmail(String emailId, int inboxCapacity) {
         super(emailId);
         this.inboxCapacity = inboxCapacity;
-        this.trash = 0;
+        this.db = new ArrayList<>();
+        this.trash = new ArrayList<>();
     }
-    ArrayList<Inbox> db = new ArrayList<>();// Inbox DataBase
 
     public void receiveMail(Date date, String sender, String message){
         // If the inbox is full, move the oldest mail in the inbox to trash and add the new mail to inbox.
@@ -24,8 +25,7 @@ public class Gmail extends Email {
         // 1. Each mail in the inbox is distinct.
         // 2. The mails are received in non-decreasing order. This means that the date of a new mail is greater than equal to the dates of mails received already.
         if(db.size()>=inboxCapacity){
-            db.remove(0);
-            trash++;
+            trash.add(db.remove(0));
         }
         Inbox ind = new Inbox(date,sender,message);
         db.add(ind);
@@ -37,8 +37,7 @@ public class Gmail extends Email {
         for (int i = 0; i< db.size(); i++){
             Inbox x = db.get(i);
             if(x.getMessage().equals(message)){
-                db.remove(i);
-                trash++;
+                trash.add(db.remove(i));
             }
         }
 
@@ -91,13 +90,13 @@ public class Gmail extends Email {
 
     public int getTrashSize(){
         // Return number of mails in Trash
-        return  trash;
+        return  trash.size();
 
     }
 
     public void emptyTrash(){
         // clear all mails in the trash
-        trash = 0;
+        trash.clear();
     }
 
     public int getInboxCapacity() {
